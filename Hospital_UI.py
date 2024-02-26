@@ -216,10 +216,7 @@ class SupervisorUI:
         self.supervisor_window.title('SUPERVISOR USER INTERFACE')
         self.supervisor_window.resizable(FALSE, FALSE)
         self.radio_button = IntVar()
-        Radiobutton(self.supervisor_window, text='Patient Registration', variable=self.radio_button, value=1).pack()
-        Radiobutton(self.supervisor_window, text='Patient Test Registration', variable=self.radio_button,
-                    value=2).pack()
-        open_button = Button(self.supervisor_window, command=self.open_option).pack()
+
 
 
 class ManagerUI:
@@ -262,11 +259,12 @@ class ReceptionistUI:
 class Patient_Registration:
     def __init__(self,window):
         self.patient_registration=window
-        self.patient_registration.state('zoomed')
+        self.patient_registration.geometry('1300x700')
         self.patient_registration.title('Register Patient')
         self.patient_registration.resizable(FALSE,FALSE)
-        titile_label=Label(self.patient_registration,text='Register New Patient',font=('Times New Roman',20,'bold')).pack()
-        frame1=LabelFrame(self.patient_registration,text='')
+        titile_label=Label(self.patient_registration,text='Register New Patient',font=('Times New Roman',20,'bold'),relief=RIDGE,bd=10).pack()
+        frame1=LabelFrame(self.patient_registration,text='Bio Details of Patient',font=('Times New Roman',12,'bold'),relief=RIDGE,bd=10)
+        frame1.place(x=40,y=80,width=1220,height=300)
 
 
 
