@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import random
+from datetime import datetime
 from tkinter import filedialog
 import mysql.connector
 class LoginUI:
@@ -240,6 +241,7 @@ class ReceptionistUI:
 
     def open_option(self):
         if self.radio_button.get()==1:
+
             p_r=Tk()
             patient_regi=Patient_Registration(p_r)
             p_r.mainloop()
@@ -260,9 +262,18 @@ class ReceptionistUI:
 class Patient_Registration:
     def __init__(self,window):
         self.patient_registration=window
+        self.patient_registration.state('zoomed')
+        self.patient_registration.title('Register Patient')
+        self.patient_registration.resizable(FALSE,FALSE)
+        titile_label=Label(self.patient_registration,text='Register New Patient',font=('Times New Roman',20,'bold')).pack()
+        frame1=LabelFrame(self.patient_registration,text='')
+
+
+
 class Patient_Details:
     def __init__(self,window):
         self.patient_details=window
+
 class Test_Registration:
     def __init__(self,window):
         self.test_registration=window
