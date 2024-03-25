@@ -70,7 +70,7 @@ class LoginUI:
                 self.login_window.destroy()
                 mydb.close()
                 supervisor_ui=Tk()
-                sui=SupervisorUI(supervisor_ui)
+                sui=PharmacistUI(supervisor_ui)
                 supervisor_ui.mainloop()
 
             elif entered_designation=='MANAGER' and result!=None:
@@ -137,7 +137,7 @@ class EmployeeRegistrationUI:
         d_o_b_label=Label(self.employee_register_ui,text='Date of Birth                  :',bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=260)
         father_name_label=Label(self.employee_register_ui,text="Father's Name               :",bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=310)
         designation_label = Label(self.employee_register_ui, text='Designation                    :', bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=360)
-        photo_label= Label(self.employee_register_ui, text="Insert ID Photo              :", bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=410)
+        doctor_label= Label(self.employee_register_ui, text="Specialist on                   :", bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=410)
         permanent_address_label=Label(self.employee_register_ui,text='Permanent Address :',bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=460)
 
         name_entry= Entry(self.employee_register_ui,font=('Times New Roman',14,'bold'),width=25,textvariable=self.name)
@@ -151,6 +151,10 @@ class EmployeeRegistrationUI:
         self.designation_combobox=ttk.Combobox(self.employee_register_ui,values=["DOCTOR",'SUPERVISOR','MANAGER','RECEPTIONIST'],font=('Times New Roman',14,'bold'))
         self.designation_combobox['state']='readonly'
         self.designation_combobox.place(x=230,y=360)
+        self.specilization_combobox=ttk.Combobox(self.employee_register_ui,values=['N/A','Cardiologist','Nephrologist','General Medicine','Gynecologist'],font=('Times New Roman',14,'bold'))
+        self.specilization_combobox['state']='readonly'
+        self.specilization_combobox.place(x=230,y=410)
+
         permanent_address_entry=Entry(self.employee_register_ui,font=('Times New Roman',14,'bold'),width=40,textvariable=self.permanent)
         permanent_address_entry.place(x=38,y=500)
 
@@ -185,8 +189,8 @@ class EmployeeRegistrationUI:
             try:
                 conn=mysql.connector.connect(host='localhost',username='root',password='1234',database='employee_db')
                 mydb=conn.cursor()
-                mydb.execute("insert into employee_details values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
-                         (self.name.get(),self.birth.get(),self.father.get(),self.permanent.get(),self.pass1.get(),self.phone.get(),self.email.get(),self.present.get(),self.number,self.designation_combobox.get()))
+                mydb.execute("insert into employee_details values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
+                         (self.name.get(),self.birth.get(),self.father.get(),self.permanent.get(),self.pass1.get(),self.phone.get(),self.email.get(),self.present.get(),self.number,self.designation_combobox.get(),self.specilization_combobox.get()))
                 conn.commit()
                 conn.close()
                 messagebox.showinfo(title='SUCCESS',message='New employee has been created. If you want to modify anything.Please click modify account.')
@@ -210,7 +214,7 @@ class DoctorUI:
 
 
 
-class SupervisorUI:
+class PharmacistUI:
     def __init__(self,window):
         self.supervisor_window=window
         self.supervisor_window.title('SUPERVISOR USER INTERFACE')
@@ -244,12 +248,12 @@ class ReceptionistUI:
             p_r.mainloop()
         elif self.radio_button.get()==2:
             p_t_r = Tk()
-            patient_test = Patient_Registration(p_t_r)
+            patient_test = Test_Registration(p_t_r)
             p_t_r.mainloop()
 
         elif self.radio_button.get()==3:
             v_r = Tk()
-            v_patient = Patient_Registration(v_r)
+            v_patient = Patient_Details(v_r)
             v_r.mainloop()
 
         else:
@@ -262,19 +266,204 @@ class Patient_Registration:
         self.patient_registration.geometry('1300x700')
         self.patient_registration.title('Register Patient')
         self.patient_registration.resizable(FALSE,FALSE)
+        self.number = random.randint(0000, 9999)
         titile_label=Label(self.patient_registration,text='Register New Patient',font=('Times New Roman',20,'bold'),relief=RIDGE,bd=10).pack()
-        frame1=LabelFrame(self.patient_registration,text='Bio Details of Patient',font=('Times New Roman',12,'bold'),relief=RIDGE,bd=10)
+        frame1=LabelFrame(self.patient_registration,text='Bio Details of Patient',font=('Times New Roman',20,'bold'),relief=RIDGE,bd=10)
         frame1.place(x=40,y=80,width=1220,height=300)
+        frame2=LabelFrame(self.patient_registration,text='Payment Details',font=('Times New Roman',20,'bold'),relief=RIDGE,bd=10)
+        frame2.place(x=40,y=400,width=1220,height=200)
+        update_button=Button(self.patient_registration,text='Register Patient Information',font=('Times New Roman',13,'bold'),command=self.register)
+        update_button.place(x=600,y=640)
+        name_label=Label(self.patient_registration,text='Name of the Patient                  :',font=('Times New Roman',13,'bold')).place(x=65,y=110)
+        age_label=Label(self.patient_registration,text='Age of the Patient                    :',font=('Times New Roman',13,'bold')).place(x=65,y=150)
+        y=Label(self.patient_registration,text='years',font=('Times New Roman',13,'bold')).place(x=400,y=150)
+        blood_group=Label(self.patient_registration,text='Blood Group of the Patient     :',font=('Times New Roman',13,'bold')).place(x=65,y=190)
+        blood_pressure_label=Label(self.patient_registration,text='Blood Pressure of the Patient :',font=('Times New Roman',13,'bold')).place(x=65,y=230)
+        gender_label=Label(self.patient_registration,text='Gender of the Patient              :',font=('Times New Roman',13,'bold')).place(x=65,y=270)
+        diabetic_label=Label(self.patient_registration,text='Diabetics of the Patient              :',font=('Times New Roman',13,'bold')).place(x=65,y=310)
+        medical_issue_label=Label(self.patient_registration,text='Medical Issue :',font=('Times New Roman',13,'bold')).place(x=900,y=120)
+        amount_label=Label(self.patient_registration,text='Amount to be paid :',font=('Times New Roman',13,'bold')).place(x=65,y=450)
+        paid_through=Label(self.patient_registration,text='Paid Through :',font=('Times New Roman',13,'bold')).place(x=700,y=450)
+        acc_number=Label(self.patient_registration,text='Account Number  :',font=('Times New Roman',13,'bold')).place(x=700,y=500)
+        ref_number=Label(self.patient_registration,text='Reference Number :',font=('Times New Roman',13,'bold')).place(x=700,y=550)
+        self.amount=Entry(self.patient_registration,font=('Times New Roman',12,'bold'))
+        self.amount.place(x=250,y=450)
+        self.acc_number_entry=Entry(self.patient_registration,font=('Times New Roman',12,'bold'))
+        self.acc_number_entry.place(x=855,y=500)
+        self.ref_entry=Entry(self.patient_registration,font=('Times New Roman',12,'bold'))
+        self.ref_entry.place(x=855,y=550)
+        self.paid_media=ttk.Combobox(self.patient_registration,values=['Cash','Bkash','Nagad'],font=('Times New Roman',13,'bold'))
+        self.paid_media['state']='readonly'
+        self.paid_media.place(x=820,y=450)
+        self.name_entry=Entry(self.patient_registration,width=30,font=('Times New Roman',13,'bold'))
+        self.name_entry.place(x=340,y=110)
+        self.age_entry=Entry(self.patient_registration,width=5,font=('Times New Roman',13,'bold'))
+        self.age_entry.place(x=340,y=150)
+        patient_id=Label(self.patient_registration,text=f'Patient ID :     {self.number}',font=('Times New Roman',13,'bold')).place(x=65,y=500)
+        self.doctor_specialization = ttk.Combobox(self.patient_registration,
+                                             values=['Cardiologist [heart]', 'Nephrologist[kidney]', 'General Medicine[general]',
+                                                     'Gynecologist[pregnant]'])
+        self.doctor_specialization['state']='readonly'
+        self.doctor_specialization.place(x=900, y=280)
+        self.blood_group_cb=ttk.Combobox(self.patient_registration,values=['A+','B+','O+','AB+','A-','B-','O-','AB-'],font=('Times New Roman',13,'bold'))
+        self.blood_group_cb['state']='readonly'
+        self.blood_group_cb.place(x=340,y=190)
+        self.blood_pressure_cb=ttk.Combobox(self.patient_registration,values=['HIGH','NORMAL','LOW'],font=('Times New Roman',13,'bold'))
+        self.blood_pressure_cb['state']='readonly'
+        self.blood_pressure_cb.place(x=340,y=230)
+        self.diabetic_cb=ttk.Combobox(self.patient_registration,values=['N/A','TYPE-1','TYPE-2'],font=('Times New Roman',13,'bold'))
+        self.diabetic_cb['state']='readonly'
+        self.diabetic_cb.place(x=340,y=310)
+        self.gender_combo=ttk.Combobox(self.patient_registration,values=['Male','Female'],font=('Times New Roman',13,'bold'))
+        self.gender_combo['state']='readonly'
+        self.gender_combo.place(x=340,y=270)
+        self.text_box=Text(self.patient_registration,width=30,height=5)
+        self.text_box.place(x=900,y=190)
 
+        suggest_button=Button(self.patient_registration,text='SUGGEST',font=('Times New Roman',12,'bold'),command=self.suggest).place(x=1160,y=200)
+
+    def register(self):
+        if self.name_entry.get()=='':
+            messagebox.showerror(title='NameError',message='Please Enter Patient Name.')
+        if self.age_entry.get()=='' or len(self.age_entry.get())>=3:
+            messagebox.showerror(title='NameError',message='Please Enter Patient Age.')
+        else:
+            try:
+                conn = mysql.connector.connect(host='localhost', username='root', password='1234', database='patient_db')
+                mydb=conn.cursor()
+                mydb.execute("insert into patient_details values(%s,%s,%s,%s,%s,%s,%s)",
+                         (self.name_entry.get(), self.age_entry.get(),
+                          self.blood_group_cb.get(),self.blood_pressure_cb.get(),
+                          self.gender_combo.get(), self.diabetic_cb.get(),self.number))
+                conn.commit()
+                conn.close()
+
+                conn1=mysql.connector.connect(host='localhost', username='root', password='1234', database='payemnt')
+                mydb2=conn1.cursor()
+                mydb2.execute("insert into payment_details values(%s,%s,%s,%s,%s)",
+                         (self.number,self.amount.get(),self.paid_media.get(),self.acc_number_entry.get(),self.ref_entry.get()))
+                conn1.commit()
+                conn1.close()
+                self.patient_registration.destroy()
+                messagebox.showinfo(title='Patient Database', message='Patient Database has been updated')
+
+            except:
+                messagebox.showerror(title='DATABASE CONNECTION ERROR',message='Database Connection Error. Please Connect to Database Properly.')
+
+    def suggest(self):
+
+        phrases = {
+            'heart_diseases': ['sweating', 'shortness of breath', 'chest pain', 'high blood pressure'],
+            'pregnancy_related': ['nausea', 'weight gain', 'bloating', 'fatigue', 'heart burn', 'missed period',
+                                  'frequent urination', 'vomiting'],
+            'kidney_diseases': ['very little', 'too much urine', 'cloudy urine', 'blood in urine', 'fever',
+                                'swelling in the hands and feet', 'fatigue', 'shortness of breath', 'loss of appetite',
+                                'nausea', 'vomiting'],
+            'general_diseases': ['fever', 'cold', 'vomiting', 'blood pressure']
+        }
+        others = ['is', 'are', 'she', 'he', 'the', 'patient', 'has', 'have', 'feeling']
+
+        writings = self.text_box.get(1.0, END).lower()
+        found = False
+
+        # Check for specific phrases in the input
+        for phrase, symptoms in phrases.items():
+            symptom_count = sum(1 for symptom in symptoms if f'{symptom}' in writings)
+            if symptom_count > 1:
+                messagebox.showinfo(title='Doctor Consultation',
+                                    message=f"Consult a {phrase.replace('_', ' ').title()} for {', '.join(symptoms)}-related concerns")
+
+                found = True
+                break
+
+
+        if not found:
+            messagebox.showinfo(title='Doctor Consultation',
+                                message="No specific suggestion based on the provided symptoms")
 
 
 class Patient_Details:
-    def __init__(self,window):
-        self.patient_details=window
+    def __init__(self, window):
+        self.patient_details = window
+        self.patient_details.title('Patient Details')
+        self.patient_details.geometry('1300x600')
+        self.patient_details.resizable(False, False)
+        title_label = Label(self.patient_details, text='Patient Details', font=('Times New Roman', 20, 'bold'),relief=RIDGE, bd=10).pack()
+        search_id_label = Label(self.patient_details, text='Search by ID :', font=('Times New Roman', 13, 'bold')).place(x=10, y=100)
+        search_name_label = Label(self.patient_details, text='Search by Name :', font=('Times New Roman', 13, 'bold')).place(x=10, y=150)
+        self.search_id_entry = Entry(self.patient_details, font=('Times New Roman', 13, 'bold'))
+        self.search_id_entry.place(x=180, y=100)
+        self.search_name_entry = Entry(self.patient_details, font=('Times New Roman', 13, 'bold'))
+        self.search_name_entry.place(x=180, y=150)
+        search_button = Button(self.patient_details, text='Search', font=('Times New Roman', 13, 'bold'), command=self.search)
+        search_button.place(x=380, y=100)
+        all_button = Button(self.patient_details, text='View All', font=('Times New Roman ', 13, 'bold'), command=self.view)
+        all_button.place(x=380, y=170)
+        cols = ('ID', 'NAME', 'GENDER', 'AGE', 'BLOOD GROUP', 'BLOOD PRESSURE', 'DIABETICS')
+        self.trv = ttk.Treeview(self.patient_details, columns=cols, show='headings')
+        for col in cols:
+            self.trv.heading(col, text=col)
+        self.trv.place(x=1, y=230)
+
+    
+
+    def search(self):
+        if self.search_id_entry.get()=='' and self.search_name_entry.get()=='':
+            messagebox.showerror(title='Empty',message='Please enter id or name.')
+        # Get the search term from the entry widgets
+        search_term_id = self.search_id_entry.get()
+        search_term_name = self.search_name_entry.get()
+
+        # Clear the Treeview
+        for row in self.trv.get_children():
+            self.trv.delete(row)
+
+        # Connect to the database
+        conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='patient_db')
+        mydb = conn.cursor()
+
+        # Execute the query based on the search term
+        if search_term_id:
+            mydb.execute(
+                "SELECT ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics FROM patient_details WHERE ID = %s",
+                (search_term_id,))
+        elif search_term_name:
+            mydb.execute(
+                "SELECT ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics FROM patient_details WHERE Name LIKE %s",
+                (f'%{search_term_name}%',))
+
+        records = mydb.fetchall()
+
+        # Insert records into the Treeview
+        for record in records:
+            self.trv.insert('', 'end', values=record)
+
+        # Close the database connection
+        mydb.close()
+        conn.close()
+
+
+
+    def view(self):
+        for row in self.trv.get_children():
+            self.trv.delete(row)
+        conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='patient_db')
+        mydb = conn.cursor()
+        mydb.execute("SELECT ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics FROM patient_details")
+        records = mydb.fetchall()
+        for i, (ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics) in enumerate(records, start=1):
+            self.trv.insert('', 'end', values=(ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics))
+
+
+
 
 class Test_Registration:
     def __init__(self,window):
         self.test_registration=window
+        self.test_registration.title('Patient Test Registration')
+        self.test_registration.geometry('600x600')
+        self.test_registration.resizable(FALSE,FALSE)
+        title_label=
 
 login_window=Tk()
 a=LoginUI(login_window)
