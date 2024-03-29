@@ -458,12 +458,104 @@ class Patient_Details:
 
 
 class Test_Registration:
-    def __init__(self,window):
-        self.test_registration=window
+    def __init__(self, window):
+        self.test_registration = window
         self.test_registration.title('Patient Test Registration')
         self.test_registration.geometry('600x600')
-        self.test_registration.resizable(FALSE,FALSE)
-        title_label=
+        self.test_registration.resizable(False, False)
+
+        title_label = Label(self.test_registration, text='Patient Test Registration', font=('Times New Roman', 13, 'bold'))
+        title_label.pack()
+
+        frame1 = LabelFrame(self.test_registration, text='Patient Details', font=('Times New Roman', 10, 'bold'), relief=RIDGE, bd=10)
+        frame1.place(x=20, y=100, width=300, height=110)
+        frame2 = LabelFrame(self.test_registration, text='Dates', font=('Times New Roman', 10, 'bold'), relief=RIDGE, bd=10)
+        frame2.place(x=350, y=100, width=220, height=110)
+
+        name_label = Label(frame1, text='Name:', font=('Times New Roman', 10, 'bold'))
+        name_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.entry_name = Entry(frame1, font=('Times New Roman', 10, 'bold'))
+        self.entry_name.grid(row=0, column=1, padx=5, pady=5)
+
+        id_label = Label(frame1, text='ID:', font=('Times New Roman', 10, 'bold'))
+        id_label.grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.entry_id = Entry(frame1, font=('Times New Roman', 10, 'bold'))
+        self.entry_id.grid(row=1, column=1, padx=5, pady=5)
+
+        issue_label = Label(frame2, text='Issue Date:', font=('Times New Roman', 10, 'bold'))
+        issue_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.issue = Entry(frame2, font=('Times New Roman', 10, 'bold'))
+        self.issue.grid(row=0, column=1, padx=5, pady=5)
+
+        delivery_label = Label(frame2, text='Delivery Date:', font=('Times New Roman', 10, 'bold'))
+        delivery_label.grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.delivery = Entry(frame2, font=('Times New Roman', 10, 'bold'))
+        self.delivery.grid(row=1, column=1, padx=5, pady=5)
+
+        self.test = ttk.Combobox(self.test_registration, values=['X-ray', 'Ultrsonography', 'Blood Test', 'Urology Test Package', 'Dengue Test'])
+        self.test['state'] = 'readonly'
+        self.test.place(x=25, y=250)
+
+        self.add_button = Button(self.test_registration, text='Add', command=self.add)
+        self.add_button.place(x=200, y=250)
+
+        # Create a Treeview widget
+        self.tree = ttk.Treeview(self.test_registration, columns=('Test Name', 'Cost'))
+        self.tree.heading('Test Name', text='Test Name')
+        self.tree.heading('Cost', text='Cost')
+        self.tree.place(x=20, y=300)
+        total_label=Label(self.test_registration,text='Total Cost=').place(x=100,y=560)
+        self.total_entry=Entry(self.test_registration)
+        self.total_entry.place(x=180,y=560)
+        button2=Button(self.test_registration,text='PRINT',command=self.print)
+        button2.place(x=400,y=560)
+    def print(self):
+        if self.entry_name.get()=='':
+            messagebox.showerror(title="Error",message="Please enter patient name")
+        elif self.entry_id.get()=='':
+            messagebox.showerror(title="Error",message="Please enter patient id")
+        elif self.issue.get()=='':
+            messagebox.showerror(title="Error",message="Please enter issue date")
+        elif self.delivery.get() == '':
+            messagebox.showerror(title="Error", message="Please enter delivery date")
+
+        elif self.total_entry.get()=='':
+            messagebox.showerror(title="Error",message="Please enter total costs")
+        else:
+            conn = mysql.connector.connect(host='localhost', user='root', password='019123456', database='Patient_Test_Registration')
+            mydb = conn.cursor()
+            mydb.execute("insert into PatientTests values(%s,%s,%s,%s,%s)",
+                     (self.entry_name.get(), self.entry_id.get(),
+                      self.issue.get(), self.delivery.get(),
+                      self.total_entry.get()))
+            conn.commit()
+            conn.close()
+            messagebox.showinfo(title='Patient Tests',message='Patient Test Report Successfully updated')
+
+
+    def add(self):
+        test_costs = {
+            'X-ray': 300,
+            'Ultrsonography': 2500,
+            'Blood Test': 100,
+            'Urology Test Package': 1500,
+            'Dengue Test': 500
+        }
+        selected_tests = self.test.get().split(',')  # Split selected tests by comma
+        print(selected_tests)
+        total_cost = 0
+        dummy_list = []
+
+        # Iterate over selected test names
+        for test_name in selected_tests:
+            test_name = test_name.strip()  # Remove leading/trailing spaces
+            if test_name in test_costs:
+                total_cost += test_costs[test_name]  # Add cost of each selected test
+                dummy_list.append(test_name)  # Add selected test to dummy list
+
+        # Insert selected test and its cost into the Treeview widget
+        self.tree.insert('', 'end', text='', values=(' , '.join(dummy_list), total_cost))
+        print(dummy_list)
 
 login_window=Tk()
 a=LoginUI(login_window)
