@@ -2,8 +2,9 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 import random
-from datetime import datetime
-from tkinter import filedialog
+from datetime import date
+
+
 import mysql.connector
 class LoginUI:
     def __init__(self,login_window):
@@ -20,9 +21,9 @@ class LoginUI:
         self.id_num=StringVar()
         self.password=StringVar()
         Radiobutton(self.login_window,text='DOCTOR',variable=self.radioButton,value='DOCTOR',bg='#3daaf6').place(x=30,y=140)
-        Radiobutton(self.login_window,text='RECEPTIONIST',variable=self.radioButton,value='RECEPTIONIST',bg='#3daaf6').place(x=160,y=140)
-        Radiobutton(self.login_window,text='SUPERVISOR',variable=self.radioButton,value='SUPERVISOR',bg='#3daaf6').place(x=320,y=140)
-        Radiobutton(self.login_window,text='MANAGER',variable=self.radioButton,value='MANAGER',bg='#3daaf6').place(x=460,y=140)
+        Radiobutton(self.login_window,text='RECEPTIONIST',variable=self.radioButton,value='RECEPTIONIST',bg='#3daaf6').place(x=150,y=140)
+        Radiobutton(self.login_window,text='PHARMACIST',variable=self.radioButton,value='PHARMACIST',bg='#3daaf6').place(x=320,y=140)
+        Radiobutton(self.login_window,text='MANAGER',variable=self.radioButton,value='MANAGER',bg='#3daaf6').place(x=480,y=140)
         UserName_label=Label(self.login_window, text='Enter USER_NAME :',font=('Times New Roman',11,'bold'),bg='#3daaf6').place(x=40,y=200)
         Id_label=Label(self.login_window, text='Enter ID                    :',font=('Times New Roman',11,'bold'),bg='#3daaf6').place(x=40,y=250)
         Password_label=Label(self.login_window, text='Enter PASSWORD   :',font=('Times New Roman',11,'bold'),bg='#3daaf6').place(x=40,y=300)
@@ -48,43 +49,43 @@ class LoginUI:
         entered_id=self.id_num.get()
         entered_password=self.password.get()
         entered_designation=self.radioButton.get()
-        try:
-            mydb=mysql.connector.connect(host='localhost',username='root',password='1234',database='employee_db')
-            mycursor=mydb.cursor()
-            mycursor.execute('SELECT * FROM employee_details WHERE ID=%s AND Name=%s AND Password=%s  AND Designation=%s',(entered_id,entered_name,entered_password,entered_designation))
-            result=mycursor.fetchone()
-            if entered_designation=='DOCTOR' and result!=None:
 
-                self.login_window.destroy()
-                mydb.close()
-                doctor_ui=Tk()
-                dui=DoctorUI(doctor_ui)
-                doctor_ui.mainloop()
-            elif entered_designation=='RECEPTIONIST' and result!=None:
-                self.login_window.destroy()
-                mydb.close()
-                receptionist_ui=Tk()
-                rui=ReceptionistUI(receptionist_ui)
-                receptionist_ui.mainloop()
-            elif entered_designation=='SUPERVISOR' and result!=None:
-                self.login_window.destroy()
-                mydb.close()
-                supervisor_ui=Tk()
-                sui=PharmacistUI(supervisor_ui)
-                supervisor_ui.mainloop()
+        mydb=mysql.connector.connect(host='localhost',username='root',password='1234',database='employee_db')
+        mycursor=mydb.cursor()
+        mycursor.execute('SELECT * FROM employee_details WHERE ID=%s AND Name=%s AND Password=%s  AND Designation=%s',(entered_id,entered_name,entered_password,entered_designation))
+        result=mycursor.fetchone()
+        if entered_designation=='DOCTOR' and result!=None:
 
-            elif entered_designation=='MANAGER' and result!=None:
-                self.login_window.destroy()
-                mydb.close()
-                manager_ui=Tk()
-                mui=ManagerUI(manager_ui)
-                manager_ui.mainloop()
-
-            else:
-                messagebox.showerror(title='Login Error',message='Invalid Username or Id or Password. ')
+            self.login_window.destroy()
+            mydb.close()
+            doctor_ui=Tk()
+            dui=DoctorUI(doctor_ui)
+            doctor_ui.mainloop()
+        elif entered_designation=='RECEPTIONIST' and result!=None:
+            self.login_window.destroy()
+            mydb.close()
+            receptionist_ui=Tk()
+            rui=ReceptionistUI(receptionist_ui)
+            receptionist_ui.mainloop()
+        elif entered_designation=='PHARMACIST' and result!=None:
+            self.login_window.destroy()
+            mydb.close()
+            supervisor_ui=Tk()
+            sui=PharmacistUI(supervisor_ui)
+            supervisor_ui.mainloop()
+        elif entered_designation=='MANAGER' and result!=None:
+            self.login_window.destroy()
+            mydb.close()
+            manager_ui=Tk()
+            mui=ManagerUI(manager_ui)
+            manager_ui.mainloop()
 
 
-        except:
+        else:
+            messagebox.showerror(title='Login Error',message='Invalid Username or Id or Password. ')
+
+
+
             messagebox.showerror(title='DATABASE ERROR',message='Database connection not established yet. Please handle database error first.')
 
 
@@ -137,7 +138,7 @@ class EmployeeRegistrationUI:
         d_o_b_label=Label(self.employee_register_ui,text='Date of Birth                  :',bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=260)
         father_name_label=Label(self.employee_register_ui,text="Father's Name               :",bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=310)
         designation_label = Label(self.employee_register_ui, text='Designation                    :', bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=360)
-        doctor_label= Label(self.employee_register_ui, text="Specialist on                   :", bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=410)
+        doctor_label= Label(self.employee_register_ui, text="Specialist(for doctor only):", bg='#fee3fe',font=('Times New Roman', 14, 'bold')).place(x=15, y=410)
         permanent_address_label=Label(self.employee_register_ui,text='Permanent Address :',bg='#fee3fe',font=('Times New Roman',14,'bold')).place(x=15,y=460)
 
         name_entry= Entry(self.employee_register_ui,font=('Times New Roman',14,'bold'),width=25,textvariable=self.name)
@@ -148,7 +149,7 @@ class EmployeeRegistrationUI:
 
         father_name_entry=Entry(self.employee_register_ui,font=('Times New Roman',14,'bold'),width=25,textvariable=self.father)
         father_name_entry.place(x=230,y=310)
-        self.designation_combobox=ttk.Combobox(self.employee_register_ui,values=["DOCTOR",'SUPERVISOR','MANAGER','RECEPTIONIST'],font=('Times New Roman',14,'bold'))
+        self.designation_combobox=ttk.Combobox(self.employee_register_ui,values=["DOCTOR",'PHARMACIST','RECEPTIONIST','MANAGER'],font=('Times New Roman',14,'bold'))
         self.designation_combobox['state']='readonly'
         self.designation_combobox.place(x=230,y=360)
         self.specilization_combobox=ttk.Combobox(self.employee_register_ui,values=['N/A','Cardiologist','Nephrologist','General Medicine','Gynecologist'],font=('Times New Roman',14,'bold'))
@@ -161,9 +162,8 @@ class EmployeeRegistrationUI:
 
 
         account_confirm_button=Button(self.employee_register_ui,text='CREATE ACCOUNT',bg='pink',font=('Times New Roman',10,'bold'),bd=5,relief=RIDGE,command=self.create_account)
-        account_confirm_button.place(x=1130,y=380)
-        modify_button=Button(self.employee_register_ui,text='MODIFY ACCOUNT',bg='pink',font=('Times New Roman',10,'bold'),bd=5,relief=RIDGE)
-        modify_button.place(x=1130,y=450)
+        account_confirm_button.place(x=1130,y=370)
+
     def create_account(self):
         if self.name.get()=='':
             messagebox.showerror(title='NAME ERROR',message='Please Enter Name of the Employee.')
@@ -202,31 +202,418 @@ class EmployeeRegistrationUI:
 
 
 
-
-
 class DoctorUI:
-    def __init__(self,window):
-        self.doctor_window=window
-        self.doctor_window.title('DOCTOR USER INTERFACE')
-        self.doctor_window.geometry('500x500')
-        self.doctor_window.resizable(FALSE,FALSE)
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Doctor Interface")
 
+        # Database connection
+        self.conn = mysql.connector.connect(
+            host="localhost",
+            user="root",
+            password="1234",
+            database="doctor_db"
+        )
+        self.cursor = self.conn.cursor()
 
+        # Create Treeview
+        self.tree = ttk.Treeview(root, columns=('Patient Name', 'Prescribed Doctor'), show='headings')
+        self.tree.heading('Patient Name', text='Patient Name')
+        self.tree.heading('Prescribed Doctor', text='Prescribed Doctor')
+        self.tree.pack(fill=BOTH, expand=True)
 
+        # Populate Treeview
+        self.populate_treeview()
 
-class PharmacistUI:
-    def __init__(self,window):
-        self.supervisor_window=window
-        self.supervisor_window.title('SUPERVISOR USER INTERFACE')
-        self.supervisor_window.resizable(FALSE, FALSE)
-        self.radio_button = IntVar()
+        # Double click event
+        self.tree.bind('<Double-1>', self.on_double_click)
 
+        # Button to delete patient
+        delete_button = Button(root, text="Delete Patient", command=self.delete_patient)
+        delete_button.pack()
+
+    def populate_treeview(self):
+        # Clear existing data
+        for record in self.tree.get_children():
+            self.tree.delete(record)
+
+        # Fetch data from database and insert into Treeview
+        self.cursor.execute("SELECT * FROM patients")
+        rows = self.cursor.fetchall()
+        for row in rows:
+            self.tree.insert('', 'end', values=(row[0], row[1]))
+
+    def on_double_click(self, event):
+        item = self.tree.selection()[0]
+        patient_name = self.tree.item(item, 'values')[0]
+        doctor_name = self.tree.item(item, 'values')[1]
+        self.open_prescription_window(patient_name, doctor_name)
+
+    def open_prescription_window(self, patient_name, doctor_name):
+        prescription_window = Toplevel(self.root)
+        prescription_window.title("Write Prescription")
+
+        # Label and Entry for prescription
+        Label(prescription_window, text="Prescription for " + patient_name).pack()
+        prescription_entry = Text(prescription_window, width=100)
+        prescription_entry.pack()
+
+        # Button to save prescription
+        save_button = Button(prescription_window, text="Save Prescription",
+                                command=lambda: self.save_prescription(prescription_window, patient_name,
+                                                                       prescription_entry.get(1.0,END)))
+        save_button.pack()
+
+    def save_prescription(self, prescription_window, patient_name, prescription):
+        r=open('prescription.txt','w')
+        r.write(f"Patient's Name: {patient_name}\n")
+        r.write(prescription)
+        r.close()
+
+    def delete_patient(self):
+        item = self.tree.selection()[0]
+        patient_name = self.tree.item(item, 'values')[0]
+        self.cursor.execute("DELETE FROM patients WHERE patient_name = %s", (patient_name,))
+        self.conn.commit()
+        self.populate_treeview()
 
 
 class ManagerUI:
     def __init__(self,window):
         self.manager_window=window
         self.manager_window.title('MANAGER USER INTERFACE')
+        self.manager_window.geometry('800x600')
+        self.manager_window.resizable(FALSE,FALSE)
+        self.option_frame=Frame(self.manager_window,bg='#74f58b')
+        self.option_frame.pack(side=LEFT)
+        self.option_frame.pack_propagate(FALSE)
+        self.option_frame.configure(width=250,height=600)
+        self.main_frame = Frame(self.manager_window, highlightbackground='yellow', highlightthickness=3,bg='#ddf9b3')
+        self.main_frame.pack(side=LEFT)
+        self.main_frame.pack_propagate(FALSE)
+        self.main_frame.configure(width=550, height=600)
+        financial_button=Button(self.option_frame,text='Financial Calculations',font=('Times New Roman',12,'bold'),command=self.financial_statement)
+        financial_button.place(x=25,y=150)
+        food_supervising=Button(self.option_frame,text='Food Supervising',font=('Times New Roman',12,'bold'),command=self.food_supervsior)
+        food_supervising.place(x=25,y=300)
+
+    def delete_frames(self):
+        for frames in self.main_frame.winfo_children():
+            frames.destroy()
+    def food_supervsior(self):
+        self.delete_frames()
+        def slip_print():
+            r = open('patient_food.txt', 'w')
+            r.write(f"Date: {date.today()}\n")
+            r.write(f"Patient's Name: {patient_name_entry.get()}\n")
+            r.write(f"Patient's ID: {patient_id_entry.get()}\n")
+            r.write(f"Patient's Room Number: {room_number_entry.get()}\n")
+            r.write(f'Food for the patient:{food_list.get()}')
+            r.close()
+            messagebox.showinfo(title='Patient food',message='Patient food successfully updated.')
+        title=Label(self.main_frame,text='Food Management For Patients',font=('Times New Roman',20,'bold'),bg='#ddf9b3').pack()
+        patient_name=Label(self.main_frame,text='Patient Name :',font=('Times New Roman',12,'bold'),bg='#ddf9b3').place(x=10,y=200)
+        patient_id=Label(self.main_frame,text='Patient ID :',font=('Times New Roman',12,'bold'),bg='#ddf9b3').place(x=10,y=250)
+        room_number=Label(self.main_frame,text='Room Number :',font=('Times New Roman',12,'bold'),bg='#ddf9b3').place(x=10,y=300)
+        food=Label(self.main_frame,text='Select food for Patient:',font=('Times New Roman',12,'bold'),bg='#ddf9b3').place(x=10,y=350)
+        patient_name_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        patient_name_entry.place(x=170,y=200)
+        patient_id_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        patient_id_entry.place(x=170,y=250)
+        room_number_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        room_number_entry.place(x=170,y=300)
+
+        food_list=ttk.Combobox(self.main_frame,values=['2 bread with jam and 1 boiled egg','Vegetable Oats','soya chunks with plain rice','1 bowl rice with chicken curry','1bowl rice with fish curry'],width=50)
+        food_list['state']='readonly'
+        food_list.place(x=170,y=350)
+
+        button=Button(self.main_frame,text='Print',command=slip_print)
+        button.place(x=400,y=500)
+
+
+    def financial_statement(self):
+        self.delete_frames()
+
+        def calculate_method():
+            if cost_entry1.get() == '' or cost_entry2.get() == '' or cost_entry3.get() == '' or profit_entry1.get() == '' or profit_entry2.get() == '' or profit_entry3.get() == '':
+                messagebox.showerror(title='Error',
+                                     message='Please fill all blank boxes with Numbers only and input month name')
+            else:
+                total=(int(profit_entry1.get())+int(profit_entry2.get())+int(profit_entry3.get()))-(int(cost_entry1.get())+int(cost_entry2.get())+int(cost_entry3.get()))
+                l=Label(self.main_frame,text=total,font=('Times New Roman',12,'bold')).place(x=300,y=150)
+
+        title=Label(self.main_frame,text='Check Financial Status of the Hospital',font=('Times New Roman',20,'bold'),bg='#ddf9b3').pack()
+        month=Label(self.main_frame,text='Month:',font=('Times New Roman',14,'bold'),bg='#ddf9b3').place(x=10,y=60)
+        recieved_title=Label(self.main_frame,text='Total Amount Recieved :',font=('Times New Roman',14,'bold'),bg='#ddf9b3').place(x=10,y=120)
+        recieved_1=Label(self.main_frame,text='Patient Registration :',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=160)
+        recieved_2=Label(self.main_frame,text='Patient Tests Registration:',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=200)
+        recieved_3=Label(self.main_frame,text='Food Service: ',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=240)
+        cost_title=Label(self.main_frame,text='Total Amount Spend :',font=('Times New Roman',14,'bold'),bg='#ddf9b3').place(x=10,y=300)
+        cost_1=Label(self.main_frame,text='Electricity Bills:',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=360)
+        cost_2=Label(self.main_frame,text='Employee Salaries:',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=400)
+        cost_3=Label(self.main_frame,text='Others Servicing costs',font=('Times New Roman',10,'bold'),bg='#ddf9b3').place(x=10,y=440)
+        calculate=Label(self.main_frame,text='Calculate Total=',font=('Times New Roman',12,'bold'),bg='#ddf9b3').place(x=300,y=120)
+        month_ccb=ttk.Combobox(self.main_frame,values=['JAN-01','FEB-02','MAR-03','APR-04','MAY-05','JUN-06','JUL-07','AUG-08','SEP-09','OCT-10','NOV-11','DEC-12'],font=('Times New Roman',14,'bold'),width=10)
+        month_ccb['state']='readonly'
+        month_ccb.place(x=100,y=60)
+        profit_entry1=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        profit_entry1.place(x=160,y=160)
+        profit_entry2=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        profit_entry2.place(x=160,y=200)
+        profit_entry3=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        profit_entry3.place(x=160,y=240)
+        cost_entry1=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        cost_entry1.place(x=160,y=360)
+        cost_entry2=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        cost_entry2.place(x=160, y=400)
+        cost_entry3=Entry(self.main_frame,width=10,font=('Times New Roman',10,'bold'))
+        cost_entry3.place(x=160, y=440)
+
+        def insert_db():
+            if cost_entry1.get() == '' or cost_entry2.get() == '' or cost_entry3.get() == '' or profit_entry1.get() == '' or profit_entry2.get() == '' or profit_entry3.get() == '':
+                messagebox.showerror(title='Error',
+                                     message='Please fill all blank boxes with Numbers only and input month name')
+            elif month_ccb.get() == '':
+                messagebox.showerror(title='Month Error', message='Please input month.')
+            else:
+                earned = int(profit_entry1.get()) + int(profit_entry2.get()) + int(profit_entry3.get())
+                spend = int(cost_entry1.get()) + int(cost_entry2.get()) + int(cost_entry3.get())
+                remaining = earned - spend
+
+                try:
+                    # Establish connection to the MySQL server
+                    db_connection = mysql.connector.connect(
+                        host="localhost",
+                        user="root",
+                        password="1234",
+                        database="manager"
+                    )
+                    cursor = db_connection.cursor()
+
+                    # SQL query to insert data into the table
+                    sql_query = "INSERT INTO monthly_financial_status (months, earned, expenditure, remaining) VALUES (%s, %s, %s, %s)"
+                    values = (month_ccb.get(), earned, spend, remaining)
+
+                    # Execute the query
+                    cursor.execute(sql_query, values)
+
+                    # Commit the transaction
+                    db_connection.commit()
+
+                    # Close the cursor and database connection
+                    cursor.close()
+                    db_connection.close()
+
+                    messagebox.showinfo(title='Info Saved', message='Saved Info Successfully')
+                except mysql.connector.Error as error:
+                    messagebox.showerror(title='Database Error', message=f'Error: {error}')
+        db_button=Button(self.main_frame,text='SAVE INFO',font=('Times New Roman',12,'bold'),command=insert_db)
+        db_button.place(x=360,y=550)
+        calc_button=Button(self.main_frame,text='CALCULATE ALL',font=('Times New Roman',12,'bold'),command=calculate_method)
+        calc_button.place(x=120,y=550)
+class PharmacistUI:
+    def __init__(self,window):
+        self.pharmacist_window=window
+        self.pharmacist_window.title('PHARMACIST USER INTERFACE')
+        self.pharmacist_window.geometry('1200x600')
+        self.pharmacist_window.resizable(FALSE, FALSE)
+        self.option_frame=Frame(self.pharmacist_window,bg='yellow')
+        self.option_frame.pack(side=LEFT)
+        self.option_frame.pack_propagate(FALSE)
+        self.option_frame.configure(width=250,height=600)
+
+        self.main_frame=Frame(self.pharmacist_window,highlightbackground='green',highlightthickness=3)
+        self.main_frame.pack(side=LEFT)
+        self.main_frame.pack_propagate(FALSE)
+        self.main_frame.configure(width=1190,height=600)
+        sale_button=Button(self.option_frame,text='Sales Management',font=('Times New Roman',15,'bold'),command=self.sale_management)
+        sale_button.place(x=10,y=100)
+        medicine_stored_button=Button(self.option_frame,text='View Medicine Database',font=('Times New Roman',15,'bold'),command=self.stored_medicine)
+        medicine_stored_button.place(x=10, y=300)
+        update_button=Button(self.option_frame,text='Update Medicine Storage',font=('Times New Roman',15,'bold'),command=self.update_medicine)
+        update_button.place(x=10,y=500)
+
+    def delete_pages(self):
+        for frame in self.main_frame.winfo_children():
+            frame.destroy()
+
+    def sale_management(self):
+        self.delete_pages()
+
+        def search():
+            a = medicne_entry.get()  # Assuming medicne_entry is a tkinter Entry widget
+            conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='medicine_db')
+            mydb = conn.cursor()
+            mydb.execute("SELECT quantity FROM medicines WHERE medicine_name = %s", (a,))
+            result = mydb.fetchone()  # Assuming you expect only one result
+            conn.close()
+
+            if result:
+                quantity = result[0]  # Extracting quantity from the result tuple
+                messagebox.showinfo(title='Medicine Info', message=f"The quantity of {a} is {quantity}.")
+            else:
+                messagebox.showinfo(title='Medicine Info', message=f"{a} not found in the database.")
+
+        def add_medicine():
+            l = Label(self.main_frame,
+                      text=f'Medicine Name:{medicne_entry.get()},Quantity:{quantity_entry.get()},Unit Price{unit_price_entry.get()}').pack(
+                side=BOTTOM)
+
+        def insert_customer(customer_name, contact_number, invoice_id, paid_amount):
+            try:
+                # Establish a connection to the MySQL database
+                conn = mysql.connector.connect(
+                    host='localhost',
+                    user='root',
+                    password='1234',
+                    database='customer_db'
+                )
+                
+
+
+                # Create a cursor object to execute SQL queries
+                cursor = conn.cursor()
+
+                # SQL query to insert data into the customers table
+                insert_query = "INSERT INTO customers (customer_name, contact_number, invoice_id, paid_amount) VALUES (%s, %s, %s, %s)"
+
+                # Data to be inserted
+                customer_data = (customer_name, contact_number, invoice_id, paid_amount)
+
+                # Execute the insert query
+                cursor.execute(insert_query, customer_data)
+
+                # Commit the transaction
+                conn.commit()
+
+                messagebox.showinfo(title='Upadate Message',message='Database updated successfully.')
+
+
+            except mysql.connector.Error as error:
+                messagebox.showerror(title='Update failed',message='Database connection unsuccessful')
+
+
+        title_l1 = Label(self.main_frame, text='SALES MANAGEMENT PAGE', font=('Times New Roman', 15, 'bold')).pack()
+        cd = Label(self.main_frame, text=date.today(), font=('Times New Roman', 15, 'bold')).pack()
+        name_label = Label(self.main_frame, text='Customer Name     :', font=('Times New Roman', 12, 'bold')).place(
+            x=10, y=100)
+        contact_label = Label(self.main_frame, text='Contact Number     :', font=('Times New Roman', 12, 'bold')).place(
+            x=10, y=150)
+        invoice_label = Label(self.main_frame, text='Invoice ID            :',
+                              font=('Times New Roman', 12, 'bold')).place(x=10, y=200)
+        product_name = Label(self.main_frame, text='Medicine Name      :', font=('Times New Roman', 12, 'bold')).place(x=10, y=250)
+        name_entry = Entry(self.main_frame, width=25, font=('Times New Roman', 12, 'bold'))
+        name_entry.place(x=158, y=100)
+        contact_entry = Entry(self.main_frame, width=25, font=('Times New Roman', 12, 'bold'))
+        contact_entry.place(x=158, y=150)
+        invoice_id=random.randint(0000000000, 9999999999)
+        invoice_label2 = Label(self.main_frame, text=invoice_id,
+                               font=('Times New Roman', 12, 'bold')).place(x=158, y=200)
+        medicne_entry = Entry(self.main_frame, width=25, font=('Times New Roman', 12, 'bold'))
+        medicne_entry.place(x=158, y=250)
+        search_button = Button(self.main_frame, text='Search medicine', command=search).place(x=315, y=250)
+        quantity_label = Label(self.main_frame, text='Quantity', font=('Times New Roman', 12, 'bold')).place(x=10,
+                                                                                                             y=300)
+        quantity_entry = Entry(self.main_frame, font=('Times New Roman', 12, 'bold'), width=5)
+        quantity_entry.place(x=158, y=300)
+        unit_price_l = Label(self.main_frame, text='Unit Price :', font=('TImes New Roman', 12, 'bold')).place(x=210,
+                                                                                                               y=300)
+        unit_price_entry = Entry(self.main_frame, width=5)
+        unit_price_entry.place(x=290, y=300)
+        total_l=Label(self.main_frame,text='Total Amount to be Paid:',font=('Times New Roman',12,'bold')).place(x=400,y=150)
+        total_e=Entry(self.main_frame,width=7,font=('Times New Roman',12,'bold'))
+        total_e.place(x=600,y=150)
+        add_medicine = Button(self.main_frame, text='Add Medicine', command=add_medicine).place(x=10, y=350)
+        insert_button = Button(self.main_frame,text='Insert into Database',command=lambda :insert_customer(name_entry.get(),contact_entry.get(),invoice_id,int(total_e.get()))).place(x=190,y=350)
+
+    def stored_medicine(self):
+        self.delete_pages()
+        title_l1=Label(self.main_frame,text='STORED MEDICINE PAGE',font=('Times New Roman',15,'bold')).pack()
+
+        def load_data():
+            try:
+                connection = mysql.connector.connect(
+                    host="localhost",
+                    user="root",
+                    password="1234",
+                    database="medicine_db"
+                )
+                cursor = connection.cursor()
+                cursor.execute(
+                    "SELECT medicine_name, provider_name, mg_quantity, batch_number, manufacture_date, expiry_date, quantity FROM medicines")
+                rows = cursor.fetchall()
+                for row in rows:
+                    trv1.insert("", "end", values=row)
+                connection.close()
+            except mysql.connector.Error as error:
+                print("Failed to fetch data from MySQL table:", error)
+        trv1=ttk.Treeview(self.main_frame)
+        trv1.pack(fill='both',expand=TRUE)
+        trv1['columns']= ("Medicine Name", "Provider Name", "MG Quantity", "Batch Number", "Manufacture Date", "Expiry Date", "Quantity")
+        trv1.column("#0", width=0, stretch=NO)
+        for column in trv1["columns"]:
+            trv1.heading(column, text=column)
+
+        load_data()
+
+    def update_medicine(self):
+        self.delete_pages()
+        def update():
+            a=int(mg_entry.get())
+            if name_entry.get()=='' or provider_entry.get()==''  or type(a)!=int or a=='' or batch_entry.get()=='' or manufac_entry.get()=='' or expiry_entry.get()=='' or quantity_entry.get()=='':
+                messagebox.showerror(title='Update error', message='Please provide all information correctly. Make sure mg_entry must be numbers.')
+            else:
+                conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='medicine_db')
+                mydb = conn.cursor()
+                mydb.execute("insert into medicines values (%s,%s,%s,%s,%s,%s,%s)", (
+                name_entry.get(), provider_entry.get(), a, batch_entry.get(), manufac_entry.get(), expiry_entry.get(),
+                quantity_entry.get()))
+                conn.commit()
+                conn.close()
+                messagebox.showinfo(title='Updated',message='Medicine updated successfully.')
+                name_entry.delete(0,END)
+                provider_entry.delete(0,END)
+                mg_entry.delete(0,END)
+                batch_entry.delete(0,END)
+                manufac_entry.delete(0,END)
+                expiry_entry.delete(0,END)
+                quantity_entry.delete(0,END)
+
+        title_l1=Label(self.main_frame,text='UPDATE MEDICINE PAGE',font=('Times New Roman',15,'bold')).pack()
+        medicine_name_lb=Label(self.main_frame,text='Name of the Medicine :',font=('Times New Roman',12,'bold')).place(x=10,y=60)
+        medicine_code_lb=Label(self.main_frame,text='Provider Company :',font=('Times New Roman',12,'bold')).place(x=10,y=120)
+        mg_label=Label(self.main_frame,text='Containing Mg      :',font=('Times New Roman',12,'bold')).place(x=10,y=180)
+        type_m_label=Label(self.main_frame,text='Medicine Type    :',font=('Times New Roman',12,'bold')).place(x=10,y=240)
+        batch_label=Label(self.main_frame,text='Batch Number     :',font=('Times New Roman',12,'bold')).place(x=10,y=300)
+        manufac_label=Label(self.main_frame,text='Manufacture Date  :',font=('Times New Roman',12,'bold')).place(x=10,y=360)
+        expire_label=Label(self.main_frame,text='Expiry Date     :',font=('Times New Roman',12,'bold')).place(x=10,y=420)
+        quantity=Label(self.main_frame,text='Quantity of the Medicine:',font=('Times New Roman',12,'bold')).place(x=10,y=480)
+        name_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        name_entry.place(x=205,y=60)
+        provider_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        provider_entry.place(x=205,y=120)
+        mg_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        mg_entry.place(x=205,y=180)
+        type_medicine=ttk.Combobox(self.main_frame,font=('Times New Roman',12,'bold'),values=['Syrup','Capsule','Tablet','Supositor'])
+        type_medicine['state']='readonly'
+        type_medicine.place(x=205,y=240)
+        batch_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        batch_entry.place(x=205,y=300)
+        manufac_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        manufac_entry.place(x=205,y=360)
+        expiry_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        expiry_entry.place(x=205,y=420)
+        quantity_entry=Entry(self.main_frame,font=('Times New Roman',12,'bold'))
+        quantity_entry.place(x=205,y=480)
+        button=Button(self.main_frame,text='UPDATE MEDICINE',font=('Times New Roman',12,'bold'),bg='#8ad5f6',command=update)
+        button.place(x=205,y=540)
+
+
+
+
+
+
+
 
 class ReceptionistUI:
     def __init__(self,receptionist_ui):
@@ -376,10 +763,23 @@ class Patient_Registration:
                 found = True
                 break
 
+        p_window=Tk()
+        p_window.geometry('50x50')
+        def doctor():
+            conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='doctor_db')
+            mydb = conn.cursor()
+            mydb.execute("INSERT INTO patients (patient_name, prescribed_doctor) VALUES (%s, %s)",(self.name_entry.get(),suggest.get()))
+            conn.commit()
+            conn.close()
+        suggest=Entry(p_window)
+        suggest.pack()
+        suggest_button=Button(p_window,text='SuggestDoctor',command=doctor).pack()
+        p_window.mainloop()
 
         if not found:
             messagebox.showinfo(title='Doctor Consultation',
                                 message="No specific suggestion based on the provided symptoms")
+
 
 
 class Patient_Details:
@@ -455,8 +855,6 @@ class Patient_Details:
             self.trv.insert('', 'end', values=(ID, Name, Gender, Age, BloodGroup, BloodPressure, Diabetics))
 
 
-
-
 class Test_Registration:
     def __init__(self, window):
         self.test_registration = window
@@ -522,7 +920,7 @@ class Test_Registration:
         elif self.total_entry.get()=='':
             messagebox.showerror(title="Error",message="Please enter total costs")
         else:
-            conn = mysql.connector.connect(host='localhost', user='root', password='019123456', database='Patient_Test_Registration')
+            conn = mysql.connector.connect(host='localhost', user='root', password='1234', database='Patient_Test_Registration')
             mydb = conn.cursor()
             mydb.execute("insert into PatientTests values(%s,%s,%s,%s,%s)",
                      (self.entry_name.get(), self.entry_id.get(),
@@ -556,7 +954,6 @@ class Test_Registration:
         # Insert selected test and its cost into the Treeview widget
         self.tree.insert('', 'end', text='', values=(' , '.join(dummy_list), total_cost))
         print(dummy_list)
-
 login_window=Tk()
 a=LoginUI(login_window)
 login_window.mainloop()
